@@ -1,0 +1,3 @@
+h1. django-images
+
+Unlike other popular thumbnailing solutions, this one will keep information about existing thumbnails in the database. This is crucial for external storages where checking for file's existence can either cost significant amounts of time or money (think Amazon S3).
