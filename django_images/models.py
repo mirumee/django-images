@@ -9,8 +9,8 @@ from django.db import models
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.urlresolvers import reverse
 
-from . import IMAGE_SIZES
 from . import utils
+from .settings import IMAGE_SIZES
 
 def hashed_upload_to(prefix, instance, filename):
     hasher = hashlib.md5()
