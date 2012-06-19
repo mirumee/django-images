@@ -1,10 +1,6 @@
 #! /usr/bin/env python
 from setuptools import setup, find_packages
 
-# dynamic retrive version number from stachless.VERSION
-version_tuple = __import__('django_images').VERSION
-version = '.'.join([str(v) for v in version_tuple])
-
 CLASSIFIERS = [
     'Development Status :: 5 - Production/Stable',
     'Environment :: Web Environment',
@@ -24,6 +20,7 @@ CLASSIFIERS = [
 
 REQUIREMENTS = [
     'Django >= 1.3',
+    'PIL >= 1.0.0',
 ]
 
 setup(name='django-images',
@@ -31,7 +28,7 @@ setup(name='django-images',
       author_email='hello@mirumee.com',
       description='A database-driver thumbnailing solution for Django',
       license='BSD',
-      version=version,
+      version='2012.6',
       packages=find_packages(),
       include_package_data=True,
       classifiers=CLASSIFIERS,
