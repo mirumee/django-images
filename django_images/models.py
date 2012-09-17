@@ -74,7 +74,8 @@ class ThumbnailManager(models.Manager):
 class Thumbnail(models.Model):
     original = models.ForeignKey(Image)
     image = models.ImageField(upload_to=thumbnail_upload_to,
-            height_field='height', width_field='width')
+            height_field='height', width_field='width',
+            max_length=255)
     size = models.CharField(max_length=100)
     height = models.PositiveIntegerField(default=0, editable=False)
     width = models.PositiveIntegerField(default=0, editable=False)
