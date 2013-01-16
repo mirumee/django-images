@@ -4,6 +4,8 @@ try:
     from cStringIO import StringIO
 except:
     from StringIO import StringIO
+    
+import PIL
 
 from django.db import models
 from django.core.files.uploadedfile import InMemoryUploadedFile
@@ -64,7 +66,11 @@ class ThumbnailManager(models.Manager):
             img = utils.scale_and_crop(image.image, **IMAGE_SIZES[size])
             # save to memory
             buf = StringIO()
-            img.save(buf, img.format, **img.info)
+            try:
+                img.save(buf, img.format, **img.info)
+            except IOError:
+                PIL.ImageFile.MAXBLOCK = img.size[0] * img.size[1]
+                img.save(buf, img.format, **img.info)
             # and save to storage
             original_dir, original_file = os.path.split(image.image.name)
             thumb_file = InMemoryUploadedFile(buf, "image", original_file, None, buf.tell(), None)
