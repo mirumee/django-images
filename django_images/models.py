@@ -68,9 +68,14 @@ class ThumbnailManager(models.Manager):
             buf = StringIO()
             try:
                 img.save(buf, img.format, **img.info)
-            except IOError:
-                PIL.ImageFile.MAXBLOCK = img.size[0] * img.size[1]
-                img.save(buf, img.format, **img.info)
+            except IOError, e:
+                if img.info.get('progression'):
+                    orig_MAXBLOCK = PIL.ImageFile.MAXBLOCK
+                    PIL.ImageFile.MAXBLOCK = 1048576
+                    img.save(buf, img.format, **img.info)
+                    PIL.ImageFile.MAXBLOCK = orig_MAXBLOCK
+                else:
+                    raise IOError(e)
             # and save to storage
             original_dir, original_file = os.path.split(image.image.name)
             thumb_file = InMemoryUploadedFile(buf, "image", original_file, None, buf.tell(), None)
