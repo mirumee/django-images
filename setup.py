@@ -20,7 +20,7 @@ CLASSIFIERS = [
 
 REQUIREMENTS = [
     'Django >= 1.3',
-    'PIL >= 1.0.0',
+    'pillow >= 1.7.8',
 ]
 
 setup(name='django-images',
