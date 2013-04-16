@@ -84,7 +84,9 @@ class ThumbnailManager(models.Manager):
             # and save to storage
             original_dir, original_file = os.path.split(image.image.name)
             thumb_file = InMemoryUploadedFile(buf, "image", original_file, None, buf.tell(), None)
-            thumbnail = image.thumbnail_set.create(size=size, image=thumb_file)
+            thumbnail, created = image.thumbnail_set.get_or_create(
+                size=size,
+                defaults={'image': thumb_file})
         return thumbnail
 
 class Thumbnail(models.Model):
@@ -99,7 +101,7 @@ class Thumbnail(models.Model):
     objects = ThumbnailManager()
 
     class Meta:
-        unique_together = ('image', 'size')
+        unique_together = ('original', 'size')
 
     def get_absolute_url(self):
         return self.image.url
