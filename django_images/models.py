@@ -17,7 +17,7 @@ from .settings import IMAGE_SIZES, IMAGE_PATH
 
 def hashed_upload_to(instance, filename, **kwargs):
     image_type = 'original' if isinstance(instance, Image) else 'thumbnail'
-    prefix = 'image/{}/by-md5/'.format(image_type)
+    prefix = 'image/%s/by-md5/' % (image_type,)
     hasher = hashlib.md5()
     for chunk in instance.image.chunks():
         hasher.update(chunk)
