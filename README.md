@@ -17,6 +17,39 @@ you don't accidentally end up with hundreds copies of the same image in
 to check the other places.
 
 
+Installation
+------------
+
+You can install `django-images` using `pip`:
+
+```
+$ pip install django-images
+```
+
+Remember to add it to your project's `INSTALLED_APPS`:
+
+```python
+# settings.py
+INSTALLED_APPS = [
+    ...,
+    'django_images',
+    ...
+]
+```
+
+And to your `urls.py`:
+
+```python
+# urls.py
+urlpatterns = patterns(
+    '',
+    ...,
+    url(r'^images/', include('django_images.urls')),
+    ...
+)
+```
+
+
 Models
 ------
 
