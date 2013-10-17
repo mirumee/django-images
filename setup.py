@@ -21,6 +21,7 @@ CLASSIFIERS = [
 REQUIREMENTS = [
     'Django >= 1.3',
     'pillow >= 1.7.8',
+    'South >= 0.7.6',
 ]
 
 setup(name='django-images',
