@@ -10,11 +10,14 @@ import PIL
 from django.db import models
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.urlresolvers import reverse
+from django.utils.importlib import import_module
 
 from . import utils
-from .settings import IMAGE_SIZES
+from .settings import IMAGE_SIZES, IMAGE_PATH
 
-def hashed_upload_to(prefix, instance, filename):
+def hashed_upload_to(instance, filename, **kwargs):
+    image_type = 'original' if isinstance(instance, Image) else 'thumbnail'
+    prefix = 'image/{}/by-md5/'.format(image_type)
     hasher = hashlib.md5()
     for chunk in instance.image.chunks():
         hasher.update(chunk)
@@ -29,11 +32,21 @@ def hashed_upload_to(prefix, instance, filename):
         'ext': ext,
     }
 
-def image_upload_to(instance, filename, **kwargs):
-    return hashed_upload_to('image/original/by-md5/', instance, filename)
+
+if IMAGE_PATH is None:
+    upload_to = hashed_upload_to
+else:
+    if callable(IMAGE_PATH):
+        upload_to = IMAGE_PATH
+    else:
+        parts = IMAGE_PATH.split('.')
+        module_name = '.'.join(parts[:-1])
+        module = import_module(module_name)
+        upload_to = getattr(module, parts[-1])
+
 
 class Image(models.Model):
-    image = models.ImageField(upload_to=image_upload_to,
+    image = models.ImageField(upload_to=upload_to,
             height_field='height', width_field='width',
             max_length=255)
     height = models.PositiveIntegerField(default=0, editable=False)
@@ -50,10 +63,6 @@ class Image(models.Model):
         except Thumbnail.DoesNotExist:
             return reverse('image-thumbnail', args=(self.id, size))
 
-
-def thumbnail_upload_to(instance, filename, **kwargs):
-    return hashed_upload_to('image/thumbnail/by-md5/', instance, filename)
-    
 
 class ThumbnailManager(models.Manager):
     def get_or_create_at_size(self, image_id, size):
@@ -91,7 +100,7 @@ class ThumbnailManager(models.Manager):
 
 class Thumbnail(models.Model):
     original = models.ForeignKey(Image)
-    image = models.ImageField(upload_to=thumbnail_upload_to,
+    image = models.ImageField(upload_to=upload_to,
             height_field='height', width_field='width',
             max_length=255)
     size = models.CharField(max_length=100)
