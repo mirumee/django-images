@@ -6,6 +6,11 @@ about existing thumbnails in the database. This is crucial for external
 storages where checking for file's existence can either cost significant
 amounts of time or money (think Amazon S3).
 
+We've decided to only generate thumbnails on demand. When requesting an
+URL for a thumbnail that does not yet exist, you will receive an URL to
+a view that actually generates the thumbnail and then redirects the
+browser to the proper URL.
+
 We also force you to define all thumbnail options in Django settings so
 you don't accidentally end up with hundreds copies of the same image in
 300×300, 303×301, 301×305 just because the template author was too lazy
