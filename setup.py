@@ -2,7 +2,6 @@
 from setuptools import setup, find_packages
 
 CLASSIFIERS = [
-    'Development Status :: 5 - Production/Stable',
     'Environment :: Web Environment',
     'Framework :: Django',
     'Intended Audience :: Developers',
@@ -18,20 +17,14 @@ CLASSIFIERS = [
     'Topic :: Software Development :: Libraries :: Python Modules',
 ]
 
-REQUIREMENTS = [
-    'Django >= 1.3',
-    'pillow >= 1.7.8',
-    'South >= 0.7.6',
-]
-
 setup(name='django-images',
       author='Mirumee Software',
       author_email='hello@mirumee.com',
       description='A database-driver thumbnailing solution for Django',
       license='BSD',
-      version='0.3',
+      version='0.3.1',
       packages=find_packages(),
       include_package_data=True,
       classifiers=CLASSIFIERS,
-      install_requires=REQUIREMENTS,
+      install_requires=['Django>=1.3', 'pillow>=1.7.8', 'South>=0.7.6'],
       platforms=['any'])
