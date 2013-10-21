@@ -1,16 +1,18 @@
 import hashlib
 import os.path
 try:
-    from cStringIO import StringIO
-except:
-    from StringIO import StringIO
+    from io import BytesIO
+except ImportError:
+    try:
+        from cStringIO import StringIO as BytesIO
+    except ImportError:
+        from StringIO import StringIO as BytesIO
     
-import PIL
-
 from django.db import models
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.urlresolvers import reverse
 from django.utils.importlib import import_module
+import PIL
 
 from . import utils
 from .settings import IMAGE_SIZES, IMAGE_PATH
