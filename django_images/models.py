@@ -1,12 +1,6 @@
 import hashlib
 import os.path
-try:
-    from io import BytesIO
-except ImportError:
-    try:
-        from cStringIO import StringIO as BytesIO
-    except ImportError:
-        from StringIO import StringIO as BytesIO
+from io import BytesIO
     
 from django.db import models
 from django.core.files.uploadedfile import InMemoryUploadedFile
@@ -76,7 +70,7 @@ class ThumbnailManager(models.Manager):
         except Thumbnail.DoesNotExist:
             img = utils.scale_and_crop(image.image, **IMAGE_SIZES[size])
             # save to memory
-            buf = StringIO()
+            buf = BytesIO()
             try:
                 img.save(buf, img.format, **img.info)
             except IOError:
