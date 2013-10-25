@@ -102,6 +102,30 @@ default implementation will use paths like:
 image/original/by-md5/7/d/7d7561de541093c04bb89c33468e88c0/file.jpg
 ```
 
+You can override it by defining a function that accepts the model and
+original filename and returns the path to use, as you would use with
+Django `FileField`'s `upload_to` parameter. The main difference is that
+the same function will be called for both original images and thumbnails:
+
+```python
+from django_images.models import Image
+
+def my_image_path(instance, filename):
+    if isinstance(instance, Image):
+        return 'original/%s' % (filename,)
+    else:
+        return 'thumbnail/%s/%s' % (instance.size, filename)
+
+IMAGE_PATH = my_image_path
+```
+
+You can also choose to define your custom function in another module and
+set `IMAGE_PATH` to its location:
+
+```python
+IMAGE_PATH = 'my_package.my_module.my_function_name'
+```
+
 
 Templates
 ---------
