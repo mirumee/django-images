@@ -5,6 +5,7 @@ from io import BytesIO
 from django.db import models
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.urlresolvers import reverse
+from django.dispatch import receiver
 from django.utils.importlib import import_module
 import PIL
 
@@ -111,8 +112,14 @@ class Thumbnail(models.Model):
     def get_absolute_url(self):
         return self.image.url
 
+
+@receiver(models.signals.post_save)
 def original_changed(sender, instance, created, **kwargs):
     if isinstance(instance, Image):
         instance.thumbnail_set.all().delete()
 
-models.signals.post_save.connect(original_changed)
+
+@receiver(models.signals.post_delete)
+def delete_image_files(sender, instance, **kwargs):
+    if isinstance(instance, (Image, Thumbnail)):
+        instance.image.delete(save=False)
