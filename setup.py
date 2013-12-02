@@ -23,9 +23,10 @@ setup(name='django-images',
       author_email='hello@mirumee.com',
       description='A database-driver thumbnailing solution for Django',
       license='BSD',
-      version='0.4',
+      version='0.4.1',
       packages=find_packages(),
       include_package_data=True,
       classifiers=CLASSIFIERS,
       install_requires=['Django>=1.3', 'pillow>=1.7.8', 'South>=0.7.6'],
-      platforms=['any'])
+      platforms=['any'],
+      zip_safe=False)
