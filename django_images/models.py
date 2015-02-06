@@ -122,4 +122,5 @@ def original_changed(sender, instance, created, **kwargs):
 @receiver(models.signals.post_delete)
 def delete_image_files(sender, instance, **kwargs):
     if isinstance(instance, (Image, Thumbnail)):
-        instance.image.delete(save=False)
+        if instance.image.storage.exists(instance.image.name):
+            instance.image.delete(save=False)
