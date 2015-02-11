@@ -126,6 +126,9 @@ set `IMAGE_PATH` to its location:
 IMAGE_PATH = 'my_package.my_module.my_function_name'
 ```
 
+`IMAGE_DELETE_ATTACHED_FILE` controls deletion of the attached files.
+Django doesn't delete these files by default, but we do.
+
 
 Templates
 ---------
