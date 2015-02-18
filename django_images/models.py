@@ -10,7 +10,7 @@ from django.utils.importlib import import_module
 import PIL
 
 from . import utils
-from .settings import IMAGE_SIZES, IMAGE_PATH
+from .settings import IMAGE_SIZES, IMAGE_PATH, IMAGE_AUTO_DELETE
 
 def hashed_upload_to(instance, filename, **kwargs):
     image_type = 'original' if isinstance(instance, Image) else 'thumbnail'
@@ -121,5 +121,6 @@ def original_changed(sender, instance, created, **kwargs):
 
 @receiver(models.signals.post_delete)
 def delete_image_files(sender, instance, **kwargs):
-    if isinstance(instance, (Image, Thumbnail)):
-        instance.image.delete(save=False)
+    if isinstance(instance, (Image, Thumbnail)) and IMAGE_AUTO_DELETE:
+        if instance.image.storage.exists(instance.image.name):
+            instance.image.delete(save=False)
