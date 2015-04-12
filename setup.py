@@ -27,6 +27,6 @@ setup(name='django-images',
       packages=find_packages(),
       include_package_data=True,
       classifiers=CLASSIFIERS,
-      install_requires=['Django>=1.3', 'pillow>=1.7.8', 'South>=0.7.6'],
+      install_requires=['Django>=1.3', 'pillow>=1.7.8'],
       platforms=['any'],
       zip_safe=False)
