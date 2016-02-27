@@ -2,3 +2,6 @@
 !.gitignore
 *.py[co]
 *~
+django_images.egg-info/
+testproject/media/
+testproject/db.sqlite3
