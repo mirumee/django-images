@@ -1,7 +1,29 @@
 from PIL import Image
 
+
 # this neat function is based on easy-thumbnails
 def scale_and_crop(image, size, crop=False, upscale=False, quality=None):
+    """
+    Resize, crop and/or change quality of an image.
+
+    :param image: Source image file
+    :param type: :class:`django.core.files.images.ImageFile`
+
+    :param size: Size as width & height, zero as either means unrestricted
+    :type size: tuple of two int
+
+    :param crop: Truncate image or not
+    :type crop: bool
+
+    :param upscale: Enable scale up
+    :type upscale: bool
+
+    :param quality: Value between 1 to 95, or None for keep the same
+    :type quality: int or NoneType
+
+    :return: Handled image
+    :rtype: class:`PIL.Image`
+    """
     # Open image and store format/metadata.
     image.open()
     im = Image.open(image)

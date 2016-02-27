@@ -7,6 +7,7 @@ from django.utils.six import BytesIO
 from django.core.urlresolvers import reverse
 from django_images.models import Image, Thumbnail
 from django_images.templatetags.images import at_size
+from django_images.utils import scale_and_crop
 
 
 class ImageModelTest(TestCase):
@@ -167,3 +168,39 @@ class ThumbnailViewTest(TestCase):
         url = reverse('image-thumbnail', args=[self.image.id, '42'])
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
+
+
+class UtilsScaleAndDropTest(TestCase):
+    def setUp(self):
+        image_obj = BytesIO()
+        qrcode_obj = qrcode.make('https://mirumee.com/')
+        qrcode_obj.save(image_obj)
+        self.imagefile = ImageFile(image_obj, '01.png')
+
+    def test_change_size(self):
+        new_size = (10, 10)
+        image = scale_and_crop(self.imagefile, new_size)
+        self.assertEqual(new_size, image.im.size)
+
+    def test_crop(self):
+        new_size = (10, 10)
+        image = scale_and_crop(self.imagefile, new_size, crop=True)
+        self.assertEqual(new_size, image.im.size)
+
+    def test_disabled_upscale(self):
+        image = scale_and_crop(self.imagefile, (740, 740), upscale=False)
+        self.assertLess(image.im.size[0], 371)
+        self.assertLess(image.im.size[1], 371)
+
+    def test_enaabled_upscale(self):
+        image = scale_and_crop(self.imagefile, (740, 740), upscale=True)
+        self.assertGreater(image.im.size[0], 371)
+        self.assertGreater(image.im.size[1], 371)
+
+    def test_not_change_quality(self):
+        image = scale_and_crop(self.imagefile, (10, 10), quality=None)
+        self.assertEqual(image.info.get('quality'), None)
+
+    def test_change_quality(self):
+        image = scale_and_crop(self.imagefile, (10, 10), quality=50)
+        self.assertEqual(image.info.get('quality'), 50)
