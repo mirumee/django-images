@@ -7,6 +7,8 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = (
     'testapp',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
     'django_images',
 )
 

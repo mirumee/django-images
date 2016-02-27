@@ -1,6 +1,9 @@
 django-images
 =============
 
+[![Build Status](https://travis-ci.org/mirumee/django-images.svg?branch=master)](https://travis-ci.org/mirumee/django-images)
+[![Coverage Status](https://coveralls.io/repos/github/mirumee/django-images/badge.svg?branch=master)](https://coveralls.io/github/mirumee/django-images?branch=master)
+
 Unlike other popular thumbnailing solutions, this one keeps information
 about existing thumbnails in the database. This is crucial for external
 storages where checking for file's existence can either cost significant

@@ -1,6 +1,6 @@
 import mock
 import qrcode
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from django.core.files.images import ImageFile
 from django.conf import settings
 from django.utils.six import BytesIO
@@ -19,7 +19,7 @@ class ImageModelTest(TestCase):
                                           image=ImageFile(image_obj, '01.png'))
 
     def test_get_by_size(self):
-        size = settings.IMAGE_SIZES.keys()[0]
+        size = list(settings.IMAGE_SIZES.keys())[0]
         thumb = Thumbnail.objects.get_or_create_at_size(self.image.id, size)
         self.image.get_by_size(size)
 
@@ -27,12 +27,12 @@ class ImageModelTest(TestCase):
         url = self.image.get_absolute_url()
         self.assertEqual(url, self.image.image.url)
         # For thumbnail
-        size = settings.IMAGE_SIZES.keys()[0]
+        size = list(settings.IMAGE_SIZES.keys())[0]
         thumb = Thumbnail.objects.get_or_create_at_size(self.image.id, size)
         url = self.image.get_absolute_url(size)
         self.assertEqual(url, thumb.image.url)
         # Fallback on creation url
-        size = settings.IMAGE_SIZES.keys()[1]
+        size = list(settings.IMAGE_SIZES.keys())[1]
         url = self.image.get_absolute_url(size)
         fallback_url = reverse('image-thumbnail', args=(self.image.id, size))
         self.assertEqual(url, fallback_url)
@@ -45,7 +45,7 @@ class ThumbnailManagerModelTest(TestCase):
         qrcode_obj.save(image_obj)
         self.image = Image.objects.create(width=370, height=370,
                                           image=ImageFile(image_obj, '01.png'))
-        self.size = settings.IMAGE_SIZES.keys()[0]
+        self.size = list(settings.IMAGE_SIZES.keys())[0]
 
     def test_unknown_size(self):
         self.assertRaises(ValueError, Thumbnail.objects.get_or_create_at_size,
@@ -69,7 +69,7 @@ class ThumbnailModelTest(TestCase):
         qrcode_obj.save(image_obj)
         self.image = Image.objects.create(width=370, height=370,
                                           image=ImageFile(image_obj, '01.png'))
-        size = settings.IMAGE_SIZES.keys()[0]
+        size = list(settings.IMAGE_SIZES.keys())[0]
         self.thumb = Thumbnail.objects.get_or_create_at_size(self.image.id, size)
 
     def test_get_absolute_url(self):
@@ -84,11 +84,11 @@ class PostSaveSignalOriginalChangedTestCase(TestCase):
         qrcode_obj.save(image_obj)
         self.image = Image.objects.create(width=370, height=370,
                                           image=ImageFile(image_obj, '01.png'))
-        size = settings.IMAGE_SIZES.keys()[0]
+        size = list(settings.IMAGE_SIZES.keys())[0]
         self.thumb = Thumbnail.objects.get_or_create_at_size(self.image.id, size)
 
     def test_post_save_signal_original_changed(self):
-        size = settings.IMAGE_SIZES.keys()[0]
+        size = list(settings.IMAGE_SIZES.keys())[0]
         thumb = Thumbnail.objects.get_or_create_at_size(self.image.id, size)
         self.image.delete()
         self.assertFalse(Thumbnail.objects.exists())
@@ -101,10 +101,10 @@ class PostDeleteSignalDeleteImageFileTest(TestCase):
         qrcode_obj.save(image_obj)
         self.image = Image.objects.create(width=370, height=370,
                                           image=ImageFile(image_obj, '01.png'))
-        size = settings.IMAGE_SIZES.keys()[0]
+        size = list(settings.IMAGE_SIZES.keys())[0]
         self.thumb = Thumbnail.objects.get_or_create_at_size(self.image.id, size)
 
-    @override_settings(IMAGE_AUTO_DELETE=True)
+    @mock.patch('django_images.models.IMAGE_AUTO_DELETE', True)
     def test_post_delete_signal_delete_image_files_enabled(self):
         storage = self.image.image.storage
         image_name = self.image.image.name
@@ -135,11 +135,11 @@ class AtSizeTemplateTagTest(TestCase):
         qrcode_obj.save(image_obj)
         self.image = Image.objects.create(width=370, height=370,
                                           image=ImageFile(image_obj, '01.png'))
-        size = settings.IMAGE_SIZES.keys()[0]
+        size = list(settings.IMAGE_SIZES.keys())[0]
         self.thumb = Thumbnail.objects.get_or_create_at_size(self.image.id, size)
 
     def test_at_size(self):
-        size = settings.IMAGE_SIZES.keys()[0]
+        size = list(settings.IMAGE_SIZES.keys())[0]
         url = at_size(self.image, size)
         self.assertEqual(url, self.thumb.image.url)
 
@@ -151,7 +151,7 @@ class ThumbnailViewTest(TestCase):
         qrcode_obj.save(image_obj)
         self.image = Image.objects.create(width=370, height=370,
                                           image=ImageFile(image_obj, '01.png'))
-        self.size = settings.IMAGE_SIZES.keys()[0]
+        self.size = list(settings.IMAGE_SIZES.keys())[0]
         self.thumb = Thumbnail.objects.get_or_create_at_size(self.image.id, self.size)
 
     def test_redirect(self):
