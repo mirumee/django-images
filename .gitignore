@@ -1,4 +1,5 @@
-.*
+.coverage
+*.sw[pon]
 !.gitignore
 *.py[co]
 *~
