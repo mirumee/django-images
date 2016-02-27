@@ -4,8 +4,9 @@ from django.test import TestCase, override_settings
 from django.core.files.images import ImageFile
 from django.conf import settings
 from django.utils.six import BytesIO
-from django_images.models import Image, Thumbnail
 from django.core.urlresolvers import reverse
+from django_images.models import Image, Thumbnail
+from django_images.templatetags.images import at_size
 
 
 class ImageModelTest(TestCase):
@@ -100,3 +101,19 @@ class PostDeleteSignalDeleteImageFileTest(TestCase):
         self.image.delete()
         self.assertTrue(storage.exists(image_name))
         self.assertTrue(storage.exists(thumb_name))
+
+
+class AtSizeTemplateTagTest(TestCase):
+    def setUp(self):
+        image_obj = BytesIO()
+        qrcode_obj = qrcode.make('https://mirumee.com/')
+        qrcode_obj.save(image_obj)
+        self.image = Image.objects.create(width=370, height=370,
+                                          image=ImageFile(image_obj, '01.png'))
+        size = settings.IMAGE_SIZES.keys()[0]
+        self.thumb = Thumbnail.objects.get_or_create_at_size(self.image.id, size)
+
+    def test_at_size(self):
+        size = settings.IMAGE_SIZES.keys()[0]
+        url = at_size(self.image, size)
+        self.assertEqual(url, self.thumb.image.url)
