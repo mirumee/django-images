@@ -37,6 +37,30 @@ class ImageModelTest(TestCase):
         self.assertEqual(url, fallback_url)
 
 
+class ThumbnailManagerModelTest(TestCase):
+    def setUp(self):
+        image_obj = BytesIO()
+        qrcode_obj = qrcode.make('https://mirumee.com/')
+        qrcode_obj.save(image_obj)
+        self.image = Image.objects.create(width=370, height=370,
+                                          image=ImageFile(image_obj, '01.png'))
+        self.size = settings.IMAGE_SIZES.keys()[0]
+
+    def test_unknown_size(self):
+        self.assertRaises(ValueError, Thumbnail.objects.get_or_create_at_size,
+                          self.image.id, 'foo')
+
+    # TODO: Test the image object and data
+    def test_create(self):
+        thumb = Thumbnail.objects.get_or_create_at_size(self.image.id, self.size)
+        self.assertEqual(self.image.thumbnail_set.count(), 1)
+
+    def test_get(self):
+        thumb = Thumbnail.objects.get_or_create_at_size(self.image.id, self.size)
+        thumb2 = Thumbnail.objects.get_or_create_at_size(self.image.id, self.size)
+        self.assertEqual(thumb.id, thumb2.id)
+
+
 class ThumbnailModelTest(TestCase):
     def setUp(self):
         image_obj = BytesIO()
