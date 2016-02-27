@@ -117,3 +117,29 @@ class AtSizeTemplateTagTest(TestCase):
         size = settings.IMAGE_SIZES.keys()[0]
         url = at_size(self.image, size)
         self.assertEqual(url, self.thumb.image.url)
+
+
+class ThumbnailViewTest(TestCase):
+    def setUp(self):
+        image_obj = BytesIO()
+        qrcode_obj = qrcode.make('https://mirumee.com/')
+        qrcode_obj.save(image_obj)
+        self.image = Image.objects.create(width=370, height=370,
+                                          image=ImageFile(image_obj, '01.png'))
+        self.size = settings.IMAGE_SIZES.keys()[0]
+        self.thumb = Thumbnail.objects.get_or_create_at_size(self.image.id, self.size)
+
+    def test_redirect(self):
+        url = reverse('image-thumbnail', args=[self.image.id, self.size])
+        response = self.client.get(url)
+        self.assertRedirects(response, self.thumb.image.url)
+
+    def test_not_found(self):
+        url = reverse('image-thumbnail', args=['42', self.size])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
+    def test_size_not_found(self):
+        url = reverse('image-thumbnail', args=[self.image.id, '42'])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
