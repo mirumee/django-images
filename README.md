@@ -57,7 +57,7 @@ We supply an `Image` model that holds information about the image.
 
 ```python
 # models.py
-from django import models
+from django.db import models
 from django_images.models import Image
 
 
@@ -134,7 +134,7 @@ Templates
 ---------
 
 ```html+django
-{% import at_size from images %}
+{% load at_size from images %}
 
 {% for image in product.images.all %}
     <img src="{{ image|at_size:"tiny_square" }}" alt="">
