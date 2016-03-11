@@ -1,0 +1,13 @@
+{% load at_size from images %}
+
+<html>
+  <body>
+    <ul>
+      {% for product in products %}
+        {% for image in product.images.all %}
+          <img src="{{ image|at_size:"tiny_square" }}" alt="">
+        {% endfor %}
+      {% endfor %}
+    </ul>
+  </body>
+</html
